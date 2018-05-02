@@ -1,8 +1,5 @@
 package Hashing;
 
-
-import com.sun.tools.doclets.formats.html.SourceToHTMLConverter;
-
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -13,20 +10,19 @@ public class Main {
     static int testsNum = 48;
     static int sampleNum = 48000;
     static int testTimes = 300;
+    static int loopTimes4LoadFactor = 20;
 
     public static void main(String[] args) {
-        testing();
+        sequenceTest();
 //        diffLoadFactor();
     }
 
     private static void diffLoadFactor() {
         // to store test information
         double[][][] results = new double[4][testsNum][3];
-
         Random rand = new Random();
         for(int i = 1; i <= 48; i++) {
-            if(i % 10 == 0) System.out.println("10 finished");
-            System.out.println("starting " + i);
+            if(i % 10 == 0) System.out.println(i + " finished, 48 in total");
 
             Hashing[] hashing = new Hashing[4];
             hashing[0] = new LinearHashing(capacity);
@@ -49,7 +45,7 @@ public class Main {
                 }
             }
 
-            for(int k = 0; k < 10; k++) {
+            for(int k = 0; k < loopTimes4LoadFactor; k++) {
                 // new random test cases
                 int[] tests2 = new int[10000];
                 for(int j = 0; j < tests2.length; j++) {
@@ -74,7 +70,7 @@ public class Main {
 
             for(int q = 0; q < 4; q++) {
                 for(int p = 0; p < 3; p++) {
-                    results[q][i - 1][p] /= 10;
+                    results[q][i - 1][p] /= loopTimes4LoadFactor;
                 }
             }
         }
@@ -97,12 +93,12 @@ public class Main {
         }
     }
 
-    private static void testing() {
+    private static void sequenceTest() {
         // to store test information
         long[][][] results = new long[4][testsNum][3];
         for(int k = 1; k <= testTimes; k++) {
             if(k % 20 == 0) {
-                System.out.println("20 times finished");
+                System.out.println(k + " times finished, " + testTimes + " in total");
             }
 
             // make random test cases
