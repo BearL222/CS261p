@@ -22,37 +22,42 @@ public class ChainedHashing extends Hashing {
 
     public int put(Integer key, Integer value) {
         int index = hashing(key);
+        int count = 0;
         if(list.get(index) == null) {
             LinkedList<Pair> chain = new LinkedList<>();
             chain.add(new Pair(key, value));
             list.set(index, chain);
+            count++;
         } else {
             list.get(index).add(new Pair(key, value));
+            count++;
         }
-        return 0;
+        return count;
     }
 
-    public Integer get(Integer key) {
+    public int[] get(Integer key) {
         int index = hashing(key);
-        Integer result = null;
+        int result = -1;
+        int count = 0;
         if(list.get(index) != null) {
             for(Pair temp : list.get(index)) {
+                count++;
                 if(temp.key.equals(key)) {
                     result = temp.value;
                     break;
                 }
             }
         }
-        return result;
+        return new int[]{result, count};
     }
 
     public int remove(Integer key) {
         int index = hashing(key);
-
-        int result = 0;
+        int count = 0;
         if(list.get(index) != null) {
             Pair toDelete = null;
             for(Pair temp : list.get(index)) {
+                count++;
                 if(temp.key.equals(key)) {
                     toDelete = temp;
                     break;
@@ -60,11 +65,10 @@ public class ChainedHashing extends Hashing {
             }
             if(toDelete != null) {
                 list.get(index).remove(toDelete);
+                count++;
             }
-        } else {
-            result = -1;
         }
 
-        return result;
+        return count;
     }
 }

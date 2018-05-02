@@ -31,14 +31,13 @@ public class QuadraticHashing extends Hashing {
         }
         if(count < capacity + 1) {
             list.set(index, new Pair(key, value));
-            return 0;
-        } else {
-            return -1;
+            count++;
         }
+        return count;
     }
 
 
-    public Integer get(Integer key) {
+    public int[] get(Integer key) {
         int count = 1;
         int hashVal = hashing(key);
         int index = (hashVal + count * count) % capacity;
@@ -46,11 +45,11 @@ public class QuadraticHashing extends Hashing {
             index = (hashVal + count * count) % capacity;
             count++;
         }
-        Integer result = null;
+        int result = -1;
         if(count < capacity + 1 && list.get(index) != null) {
             result = list.get(index).value;
         }
-        return result;
+        return new int[]{result, count};
     }
 
 
@@ -63,12 +62,10 @@ public class QuadraticHashing extends Hashing {
             count++;
         }
 
-        int result = 0;
-        if(count >= capacity + 1 || list.get(index) == null) {
-            result = -1;
-        } else {
+        if(count < capacity + 1 && list.get(index) != null) {
             list.get(index).key = null;
+            count++;
         }
-        return result;
+        return count;
     }
 }

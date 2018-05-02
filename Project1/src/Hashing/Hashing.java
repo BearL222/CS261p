@@ -22,13 +22,14 @@ public class Hashing {
         return new int[]{};
     }
 
-    private void resize(Pair toPut) {
-        System.out.println("in hashing");
-    }
-
-    public Integer get(Integer key) {
+    private int resize(Pair toPut) {
         System.out.println("in hashing");
         return 0;
+    }
+
+    public int[] get(Integer key) {
+        System.out.println("in hashing");
+        return new int[]{};
     }
 
     public int remove(Integer key) {

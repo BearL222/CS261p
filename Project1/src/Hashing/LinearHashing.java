@@ -30,25 +30,24 @@ public class LinearHashing extends Hashing {
         }
         if(count != capacity) {
             list.set(index, new Pair(key, value));
-            return 0;
-        } else {
-            return -1;
+            count++;
         }
+        return count;
     }
 
 
-    public Integer get(Integer key) {
+    public int[] get(Integer key) {
         int index = hashing(key);
         int count = 0;
         while(count != capacity && list.get(index) != null && !list.get(index).key.equals(key)) {
             index = (index + 1) % capacity;
             count++;
         }
-        Integer result = null;
+        int result = -1;
         if(count != capacity && list.get(index) != null) {
             result = list.get(index).value;
         }
-        return result;
+        return new int[]{result, count};
     }
 
 
@@ -60,12 +59,10 @@ public class LinearHashing extends Hashing {
             count++;
         }
 
-        int result = 0;
-        if(count == capacity || list.get(index) == null) {
-            result = -1;
-        } else {
+        if(count != capacity && list.get(index) != null) {
             list.get(index).key = null;
+            count++;
         }
-        return result;
+        return count;
     }
 }
