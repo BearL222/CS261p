@@ -1,6 +1,7 @@
 package Hashing;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
@@ -8,8 +9,7 @@ import java.util.Random;
 public class Main {
     static int capacity = 5000;
     static int testsNum = 48;
-    static int sampleNum = 4800;
-    static int testTimes = 40;
+    static int testTimes = 200;
     static int loopTimes4LoadFactor = 20;
 
     public static void main(String[] args) {
@@ -92,43 +92,39 @@ public class Main {
     }
 
     private static void sequenceTest() {
+        testsNum = (int)(testsNum * 1.1);
+
         // to store test information
-        long[][][] results = new long[4][testsNum][3];
+        long[][] results = new long[testsNum][3];
+        int maxCapacity = capacity * testsNum / 50;
+        int[] tests = new int[maxCapacity];
+        Random rand = new Random();
+
         for (int k = 1; k <= testTimes; k++) {
-            if (k % 20 == 0) {
+            if (k % 10 == 0) {
                 System.out.println(k + " times finished, " + testTimes + " in total");
             }
 
             // make random test cases
-            int[] tests = new int[sampleNum];
-            Random rand = new Random();
             HashSet<Integer> set = new HashSet<>();
-            for (int i = 0; i < sampleNum; i++) {
-                int test = rand.nextInt(capacity * 100);
+            for (int i = 0; i < maxCapacity; i++) {
+                int test = rand.nextInt(Integer.MAX_VALUE - 1000);
                 while (set.contains(test)) {
-                    test = rand.nextInt(capacity * 100);
+                    test = rand.nextInt(Integer.MAX_VALUE - 1000);
                 }
                 tests[i] = test;
             }
 
             for (int i = 1; i <= testsNum; i++) {
-                Hashing[] hashing = new Hashing[4];
-//                hashing[0] = new LinearHashing(capacity);
-//                hashing[1] = new ChainedHashing(capacity);
-                hashing[2] = new CuckooHashing(capacity);
-//                hashing[3] = new QuadraticHashing(capacity);
+                if(i == 96) {
+                    int a=1;
+                }
 
-//                for (int j = 0; j < 4; j++) {
-//                    sum(results[j][i - 1], calculate(hashing[j], Arrays.copyOfRange(tests, 0, i * capacity / 50)));
-//                }
-                sum(results[2][i - 1], calculate(hashing[2], Arrays.copyOfRange(tests, 0, i * capacity / 50)));
+                sum(results[i - 1], calculate(Arrays.copyOfRange(tests, 0, i * capacity / 50)));
             }
         }
 
-//        for (int i = 0; i < 4; i++) {
-//            printResult(mean(results[i], i));
-//        }
-        printResult(mean(results[2], 2));
+        printResult(mean(results, 2));
     }
 
     private static void sum(long[] a1, long[] a2) {
@@ -138,9 +134,9 @@ public class Main {
     }
 
     private static long[][] mean(long[][] a, int type) {
-        long[][] res = new long[a.length][3];
+        long[][] res = new long[a.length][a[0].length];
         for(int i = 0; i < a.length; i++) {
-            for(int j = 0; j < 3; j++) {
+            for(int j = 0; j < a[0].length; j++) {
                 res[i][j] = a[i][j] / testTimes;
             }
         }
@@ -156,10 +152,17 @@ public class Main {
         }
     }
 
-    private static long[] calculate(Hashing hashing, int[] tests) {
+    private static long[] calculate(int[] tests) {
         long[] results = new long[3];
+        CuckooHashing hashing = new CuckooHashing(capacity);
+        int h = 0;
+
         // put
         for(int test : tests) {
+            if(h == 9599) {
+                int a=1;
+            }
+            h++;
             results[0] += hashing.put(test, test);
         }
         // get
@@ -170,6 +173,7 @@ public class Main {
         for(int test : tests) {
             results[2] += hashing.remove(test);
         }
+//        System.out.println("resize num: " + hashing.resizeNum);
         return results;
     }
 }

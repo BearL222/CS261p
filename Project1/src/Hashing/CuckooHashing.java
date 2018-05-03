@@ -1,15 +1,21 @@
 package Hashing;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class CuckooHashing extends Hashing {
+    int resizeNum = 0;
     int capacity;
     int c4Resize;
     ArrayList<ArrayList<Pair>> list;
+    int magicNumRange = 1000;
+    int magicHashNum1;
+    int magicHashNum2;
 
     CuckooHashing(int capacity) {
-        this.c4Resize = 100;
+        this.c4Resize = 30;
         this.capacity = capacity;
+        newHashFunc();
         list = new ArrayList<>();
         list.add(new ArrayList<Pair>());
         list.add(new ArrayList<Pair>());
@@ -20,13 +26,22 @@ public class CuckooHashing extends Hashing {
         }
     }
 
+    private void newHashFunc() {
+        Random rand = new Random();
+        magicHashNum1 = rand.nextInt(magicNumRange) + 1;
+        magicHashNum2 = rand.nextInt(magicNumRange) + 1;
+        while(magicHashNum2 == magicHashNum1) {
+            magicHashNum2 = rand.nextInt(magicNumRange) + 1;
+        }
+    }
+
 
     private int hashing(int function, Integer key) {
         int result = 0;
         if(function == 0) {
-            result = key % capacity;
+            result = (key + magicHashNum1) % capacity;
         } else {
-            result = (key / capacity) % capacity;
+            result = ((key + magicHashNum2) / capacity) % capacity;
         }
         return result;
     }
@@ -47,16 +62,18 @@ public class CuckooHashing extends Hashing {
     }
 
     private int[] findPlace(Pair toPut) {
+        Pair origin = toPut;
         int t = 0;
         int count = 0;
         int index = hashing(t, toPut.key);
-        while(list.get(t).get(index) != null && count < capacity) {
-            count++;
-            // if new put key is the same with already existing one
-            if(list.get(t).get(index).key.equals(toPut.key)) {
+        boolean alreadyExist = false;
+        while(list.get(t).get(index) != null && count < c4Resize * Math.log10(capacity)) {
+            if(list.get(t).get(index).key == origin.key && list.get(t).get(index) != origin) {
+                alreadyExist = true;
                 break;
             }
 
+            count++;
             Pair tmp = toPut;
             toPut = list.get(t).get(index);
             list.get(t).set(index, tmp);
@@ -66,21 +83,29 @@ public class CuckooHashing extends Hashing {
         }
 
         int[] result;
-        if(count >= capacity) {
-            result = new int[]{-1, -1, toPut.key, toPut.value, count};
-        } else {
+        if(list.get(t).get(index) == null || alreadyExist) {
             result = new int[]{t, index, toPut.key, toPut.value, count};
+        } else {
+            result = new int[]{-1, -1, toPut.key, toPut.value, count};
         }
         return result;
     }
 
     private int resize(Pair toPut) {
+        resizeNum++;
         ArrayList<ArrayList<Pair>> backupList = this.list;
         boolean noConflict;
         int count = 0;
+        int newHashCount = 0;
         do {
             noConflict = true;
-            capacity *= 2;
+            if(newHashCount < 10) {
+                newHashFunc();
+                newHashCount++;
+            } else {
+                capacity *= 2;
+                newHashCount = 0;
+            }
             // prepare a new array list
             ArrayList<ArrayList<Pair>> newList = new ArrayList<>();
             newList.add(new ArrayList<>());
@@ -88,6 +113,7 @@ public class CuckooHashing extends Hashing {
             for(int i = 0; i < capacity; i++) {
                 newList.get(0).add(null);
                 newList.get(1).add(null);
+                count += 2;
             }
 
             this.list = newList;
