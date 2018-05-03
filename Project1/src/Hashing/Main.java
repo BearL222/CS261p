@@ -1,5 +1,6 @@
 package Hashing;
 
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -44,6 +45,7 @@ public class Main {
                     int tmp = rand.nextInt(Integer.MAX_VALUE - 1000);
                     tests2[j] = tmp;
                 }
+                writeResults(tests, k, i);
 
                 for(int q = 0; q < 4; q++) {
                     for(int p = 0; p < 3; p++) {
@@ -98,6 +100,7 @@ public class Main {
                 int test = rand.nextInt(Integer.MAX_VALUE - 1000);
                 tests[i] = test;
             }
+//            writeResults(tests, k);
 
             for (int i = 1; i <= testsNum; i++) {
                 sum(results[i - 1], calculate(Arrays.copyOfRange(tests, 0, i * capacity / 50)));
@@ -149,5 +152,18 @@ public class Main {
             results[2] += hashing.remove(test);
         }
         return results;
+    }
+
+    private static void writeResults(int[] tests, int k, int j) {
+        try {
+            PrintWriter pw = new PrintWriter("other" + k + "." + j + "." + ".txt", "UTF-8");
+            for(int i : tests) {
+                pw.print(i + ",");
+            }
+        } catch(Exception ex) {
+
+        }
+
+
     }
 }
