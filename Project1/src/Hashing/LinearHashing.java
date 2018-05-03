@@ -24,11 +24,11 @@ public class LinearHashing extends Hashing {
     public int put(Integer key, Integer value) {
         int index = hashing(key);
         int count = 0;
-        while(count != capacity && list.get(index) != null && list.get(index).key != null) {
+        while(count != capacity && list.get(index) != null && list.get(index).key != null && !list.get(index).key.equals(key)) {
             index = (index + 1) % capacity;
             count++;
         }
-        if(count != capacity) {
+        if(count != capacity || list.get(index).key.equals(key)) {
             list.set(index, new Pair(key, value));
             count++;
         }

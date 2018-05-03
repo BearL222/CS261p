@@ -1,20 +1,17 @@
 package Hashing;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Random;
 
 public class Main {
     static int capacity = 5000;
     static int testsNum = 48;
-    static int testTimes = 200;
-    static int loopTimes4LoadFactor = 20;
+    static int testTimes = 300;
+    static int loopTimes4LoadFactor = 100;
 
     public static void main(String[] args) {
-        sequenceTest();
-//        diffLoadFactor();
+//        sequenceTest();
+        diffLoadFactor();
     }
 
     private static void diffLoadFactor() {
@@ -32,14 +29,9 @@ public class Main {
 
             // generate test cases
             int[] tests = new int[i * capacity / 50];
-            HashSet<Integer> set = new HashSet<>();
             for(int j = 0; j < tests.length; j++) {
-                int tmp = rand.nextInt(capacity * 10);
-                while(set.contains(tmp)) {
-                    tmp = rand.nextInt(capacity * 10);
-                }
+                int tmp = rand.nextInt(Integer.MAX_VALUE - 1000);
                 tests[i] = tmp;
-                set.add(tmp);
                 for(Hashing hash : hashing) {
                     hash.put(tmp, tmp);
                 }
@@ -49,12 +41,8 @@ public class Main {
                 // new random test cases
                 int[] tests2 = new int[capacity / 100];
                 for(int j = 0; j < tests2.length; j++) {
-                    int tmp = rand.nextInt(capacity * 10);
-                    while(set.contains(tmp)) {
-                        tmp = rand.nextInt(capacity * 10);
-                    }
+                    int tmp = rand.nextInt(Integer.MAX_VALUE - 1000);
                     tests2[j] = tmp;
-                    set.add(tmp);
                 }
 
                 for(int q = 0; q < 4; q++) {
@@ -106,20 +94,12 @@ public class Main {
             }
 
             // make random test cases
-            HashSet<Integer> set = new HashSet<>();
             for (int i = 0; i < maxCapacity; i++) {
                 int test = rand.nextInt(Integer.MAX_VALUE - 1000);
-                while (set.contains(test)) {
-                    test = rand.nextInt(Integer.MAX_VALUE - 1000);
-                }
                 tests[i] = test;
             }
 
             for (int i = 1; i <= testsNum; i++) {
-                if(i == 96) {
-                    int a=1;
-                }
-
                 sum(results[i - 1], calculate(Arrays.copyOfRange(tests, 0, i * capacity / 50)));
             }
         }
@@ -155,14 +135,9 @@ public class Main {
     private static long[] calculate(int[] tests) {
         long[] results = new long[3];
         CuckooHashing hashing = new CuckooHashing(capacity);
-        int h = 0;
 
         // put
         for(int test : tests) {
-            if(h == 9599) {
-                int a=1;
-            }
-            h++;
             results[0] += hashing.put(test, test);
         }
         // get
@@ -173,7 +148,6 @@ public class Main {
         for(int test : tests) {
             results[2] += hashing.remove(test);
         }
-//        System.out.println("resize num: " + hashing.resizeNum);
         return results;
     }
 }

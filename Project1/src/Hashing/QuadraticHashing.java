@@ -25,11 +25,11 @@ public class QuadraticHashing extends Hashing {
         int count = 1;
         int hashVal = hashing(key);
         int index = (hashVal + count * count) % capacity;
-        while(count < capacity + 1 && list.get(index) != null && list.get(index).key != null) {
+        while(count < capacity + 1 && list.get(index) != null && list.get(index).key != null && !list.get(index).key.equals(key)) {
             index = (hashVal + count * count) % capacity;
             count++;
         }
-        if(count < capacity + 1) {
+        if(count < capacity + 1 || list.get(index).key.equals(key)) {
             list.set(index, new Pair(key, value));
             count++;
         }

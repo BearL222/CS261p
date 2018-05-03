@@ -29,8 +29,20 @@ public class ChainedHashing extends Hashing {
             list.set(index, chain);
             count++;
         } else {
-            list.get(index).add(new Pair(key, value));
-            count++;
+            LinkedList<Pair> chain = list.get(index);
+            boolean alreadyExist = false;
+            for(Pair pair : chain) {
+                count++;
+                if(pair.key.equals(key)) {
+                    pair.value = value;
+                    alreadyExist = true;
+                    break;
+                }
+            }
+            if(!alreadyExist) {
+                count++;
+                list.get(index).add(new Pair(key, value));
+            }
         }
         return count;
     }
