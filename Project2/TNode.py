@@ -9,3 +9,4 @@ class TNode:
         self.value = value
         self.priority = priority
         self.parent = parent
+

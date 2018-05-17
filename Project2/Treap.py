@@ -23,17 +23,53 @@ class Treap:
                 return node
         return None
 
-    @staticmethod
-    def rotate_right(parent):
+    def rotate_right(self, parent):
+        # mark parent's parent
+        pp = parent.parent
+        if pp is not None:
+            lor = parent is not pp.leftChild
+
+        # rotate
         v = parent.leftChild
         parent.leftChild = v.rightChild
         v.rightChild = parent
 
-    @staticmethod
-    def rotate_left(parent):
+        # update parent
+        if pp is not None:
+            v.parent = pp
+            if lor:
+                pp.rightChild = v
+            else:
+                pp.leftChild = v
+        else:
+            self.root = v
+        parent.parent = v
+        if parent.leftChild is not None:
+            parent.leftChild.parent = parent
+
+    def rotate_left(self, parent):
+        # mark parent's parent
+        pp = parent.parent
+        if pp is not None:
+            lor = parent is not pp.leftChild
+
+        # rotate
         v = parent.rightChild
         parent.rightChild = v.leftChild
         v.leftChild = parent
+
+        # update parent
+        if pp is not None:
+            v.parent = pp
+            if lor:
+                pp.rightChild = v
+            else:
+                pp.leftChild = v
+        else:
+            self.root = v
+        parent.parent = v
+        if parent.rightChild is not None:
+            parent.rightChild.parent = parent
 
     def insert(self, k):
         new_node = TNode(k, random.random(), None)
@@ -61,13 +97,16 @@ class Treap:
                 parent.rightChild = new_node
             new_node.parent = parent
 
-        # do some rotation
-        v = new_node
-        while v is not self.root and v.priority > v.parent.priority:
-            if v is v.parent.leftChild:
-                self.rotate_right(v.parent)
-            else:
-                self.rotate_left(v.parent)
+            # do some rotation
+            v = new_node
+            r = 0
+            while v.parent is not self.root and v.priority > v.parent.priority:
+                r += 1
+                print(r)
+                if v is v.parent.leftChild:
+                    self.rotate_right(v.parent)
+                elif v is v.parent.rightChild:
+                    self.rotate_left(v.parent)
 
     def delete(self, k):
         v = self.search(k)

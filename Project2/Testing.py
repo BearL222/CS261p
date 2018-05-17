@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 
 
 # basic test info
-test = TestFunc(50000)
-results = test.testing()
+test = TestFunc(500)
+results = test.start_test(2)
 
 for i in range(0, 4):
     plt.figure(i)
