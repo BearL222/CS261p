@@ -64,17 +64,38 @@ class BinaryTree:
                     node.parent.rightChild = None
 
     def true_delete(self, node):
+        # if it is the root
+        is_root = False
+        dummy = BTNode(0, None)
         if node is self.root:
-            # node is the root
+            is_root = True
+            dummy.leftChild = node
+            node.parent = dummy
+
+        # 3 cases
+        if node.leftChild is None and node.rightChild is None:
+            # if node is a leaf node
+            self.remove_node(node)
+        else:
+            # if node is not a leaf node
+            lor = node is node.parent.rightChild
+            parent = node.parent
             if node.leftChild is None and node.rightChild is None:
-                self.root = None
-                self.empty = True
+                self.remove_node(node)
             elif node.leftChild is not None and node.rightChild is None:
-                self.root = node.leftChild
-                node.leftChild.parent = None
+                if not lor:
+                    parent.leftChild = node.leftChild
+                    parent.leftChild.parent = parent
+                else:
+                    parent.rightChild = node.leftChild
+                    parent.rightChild.parent = parent
             elif node.leftChild is None and node.rightChild is not None:
-                self.root = node.rightChild
-                node.rightChild.parent = None
+                if not lor:
+                    parent.leftChild = node.rightChild
+                    parent.leftChild.parent = parent
+                else:
+                    parent.rightChild = node.rightChild
+                    parent.rightChild.parent = parent
             else:
                 # find the max one in left subtree
                 max_left = node.leftChild
@@ -83,36 +104,7 @@ class BinaryTree:
                 value_to_relace = max_left.value
                 self.true_delete(max_left)
                 node.value = value_to_relace
-        else:
-            # node is not the root
-            if node.leftChild is None and node.rightChild is None:
-                # if node is a leaf node
-                self.remove_node(node)
-            else:
-                # if node is not a leaf node
-                lor = node is node.parent.rightChild
-                parent = node.parent
-                if node.leftChild is None and node.rightChild is None:
-                    self.remove_node(node)
-                elif node.leftChild is not None and node.rightChild is None:
-                    if ~lor:
-                        parent.leftChild = node.leftChild
-                        parent.leftChild.parent = parent
-                    else:
-                        parent.rightChild = node.leftChild
-                        parent.rightChild.parent = parent
-                elif node.leftChild is None and node.rightChild is not None:
-                    if ~lor:
-                        parent.leftChild = node.rightChild
-                        parent.leftChild.parent = parent
-                    else:
-                        parent.rightChild = node.rightChild
-                        parent.rightChild.parent = parent
-                else:
-                    # find the max one in left subtree
-                    max_left = node.leftChild
-                    while max_left.rightChild is not None:
-                        max_left = max_left.rightChild
-                    value_to_relace = max_left.value
-                    self.true_delete(max_left)
-                    node.value = value_to_relace
+
+        # if it is the root, remove dummy
+        if is_root:
+            node.parent = None
