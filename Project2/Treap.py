@@ -43,6 +43,7 @@ class Treap:
                 pp.leftChild = v
         else:
             self.root = v
+            v.parent = None
         parent.parent = v
         if parent.leftChild is not None:
             parent.leftChild.parent = parent
@@ -67,6 +68,7 @@ class Treap:
                 pp.leftChild = v
         else:
             self.root = v
+            v.parent = None
         parent.parent = v
         if parent.rightChild is not None:
             parent.rightChild.parent = parent

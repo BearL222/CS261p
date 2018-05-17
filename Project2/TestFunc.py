@@ -1,9 +1,9 @@
 from time import *
-import random
 import numpy as np
 from BinaryTree import *
 from AVLTree import *
 from Treap import *
+from SplayTree import *
 
 
 class TestFunc:
@@ -39,6 +39,8 @@ class TestFunc:
             tree = AVLTree()
         elif type == 2:
             tree = Treap()
+        elif type == 3:
+            tree = SplayTree()
         end = time()
         times.append(end - start)
 
