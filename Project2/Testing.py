@@ -1,5 +1,6 @@
 from TestFunc import *
 import matplotlib.pyplot as plt
+from BTNode import *
 
 
 # basic test info
