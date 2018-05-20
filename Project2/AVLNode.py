@@ -3,9 +3,7 @@ class AVLNode:
     leftChild = None
     rightChild = None
     height = None
-    parent = None
 
-    def __init__(self, value, parent):
+    def __init__(self, value):
         self.value = value
-        self.height = 0
-        self.parent = parent
+        self.height = 1
