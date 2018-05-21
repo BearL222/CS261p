@@ -3,13 +3,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-loop_times = 5
+loop_times = 1
 results = np.zeros((50,4))
 for i in range(loop_times):
-    print(i," times finished")
     # basic test info
     test = TestFunc(50000)
     results += test.start_test(0)
+    print(i+1, " times finished")
 results /= loop_times
 
 # show plot

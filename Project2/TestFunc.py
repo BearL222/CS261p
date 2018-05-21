@@ -38,15 +38,16 @@ class TestFunc:
     def start_test(self, type):
         results = np.zeros((50, 4))
         for index, i in enumerate(self.bases):
+            print("index: ",index," finished")
             results[index, :] = self.test_tree(self.dataset[:i], type)
         return results
 
     def test_tree(self, partSet, type):
+        result = None
         times = []
         tree = None
 
         # create
-        start = time()
         if type == 0:
             tree = BinaryTree()
         elif type == 1:
@@ -55,33 +56,28 @@ class TestFunc:
             tree = Treap()
         elif type == 3:
             tree = SplayTree()
-        end = time()
-        times.append(end - start)
+        times.append(1)
 
         # insert enough data first: 1,000, 2,000,..., 50,000
         for e in partSet:
             tree.insert(e)
 
         # insert
-        start = time()
+        counter = 0
         for e in self.dataset_unit:
-            tree.insert(e)
-        # print("set sized ", len(self.dataset_unit), " finish")
-        end = time()
-        times.append(end - start)
+            counter += tree.insert(e)[1]
+        times.append(counter)
 
         # search
-        start = time()
+        counter = 0
         for e in self.dataset_unit:
-            tree.search(e)
-        end = time()
-        times.append(end - start)
+            counter += tree.search(e)[1]
+        times.append(counter)
 
         # delete
-        start = time()
+        counter = 0
         for e in self.dataset_unit:
-            tree.delete(e)
-        end = time()
-        times.append(end - start)
+            counter += tree.delete(e)[1]
+        times.append(counter)
 
         return times

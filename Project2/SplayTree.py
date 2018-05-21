@@ -3,12 +3,13 @@ from SNode import *
 class SplayTree:
     root = None
     empty = True
+    counter = 0
 
     def __init__(self):
         self.empty = True
 
     def rotate_right(self, parent):
-        print("rotate right")
+        self.counter += 1
         # mark parent's parent
         pp = parent.parent
         if pp is not None:
@@ -34,7 +35,7 @@ class SplayTree:
             parent.leftChild.parent = parent
 
     def rotate_left(self, parent):
-        print("rotate left")
+        self.counter += 1
         # mark parent's parent
         pp = parent.parent
         if pp is not None:
@@ -60,7 +61,7 @@ class SplayTree:
             parent.rightChild.parent = parent
 
     def splay(self, node):
-        print("splay")
+        self.counter += 1
         if node is None:
             return
         while node.parent is not None:
@@ -88,11 +89,14 @@ class SplayTree:
                 self.rotate_left(node.parent)
 
     def search(self, k):
+        results = [None] * 2
+        self.counter = 1
         success = False
         if not self.empty:
             node = self.root
             last = None
             while node is not None:
+                self.counter += 1
                 last = node
                 if k < node.value:
                     node = node.leftChild
@@ -105,9 +109,13 @@ class SplayTree:
                 self.splay(node)
             else:
                 self.splay(last)
-        return success
+        results[0] = success
+        results[1] = self.counter
+        return results
 
     def insert(self, k):
+        results = [None] * 2
+        self.counter = 1
         new_node = SNode(k, None)
         if self.empty:
             self.empty = False
@@ -117,7 +125,9 @@ class SplayTree:
             node = self.root
             parent = None
             lor = 0
+            h1 = True
             while node is not None:
+                self.counter += 1
                 if k < node.value:
                     parent = node
                     lor = 0
@@ -127,24 +137,30 @@ class SplayTree:
                     lor = 1
                     node = node.rightChild
                 else:
-                    return
-            if lor == 0:
-                parent.leftChild = new_node
-            else:
-                parent.rightChild = new_node
-            new_node.parent = parent
+                    h1 = False
+                    break
+            if h1:
+                if lor == 0:
+                    parent.leftChild = new_node
+                else:
+                    parent.rightChild = new_node
+                new_node.parent = parent
 
-            # splay
-            self.splay(new_node)
+                # splay
+                self.splay(new_node)
+        results[1] = self.counter
+        return results
 
     def delete(self, k):
+        results = [None] * 2
+        self.counter = 1
         success = False
         if not self.empty:
             node = self.root
             last = None
             # find it
             while node is not None:
-                print("try to find it, node value ", node.value, ", key is ", k)
+                self.counter += 1
                 last = node
                 if k < node.value:
                     node = node.leftChild
@@ -160,9 +176,12 @@ class SplayTree:
                 self.splay(p)
             else:
                 self.splay(last)
-        return success
+        results[0] = success
+        results[1] = self.counter
+        return results
 
     def remove_node(self, node):
+        self.counter += 1
         if node is not None:
             if node.parent is None:
                 # it is the root
@@ -175,6 +194,7 @@ class SplayTree:
                     node.parent.rightChild = None
 
     def true_delete(self, node):
+        self.counter += 1
         # if it is the root
         is_root = False
         dummy = SNode(0, None)
@@ -211,6 +231,7 @@ class SplayTree:
                 # find the max one in left subtree
                 max_left = node.leftChild
                 while max_left.rightChild is not None:
+                    self.counter += 1
                     if max_left.rightChild.value <= max_left.value:
                         a=1
                     max_left = max_left.rightChild
