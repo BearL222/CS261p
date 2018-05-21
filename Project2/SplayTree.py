@@ -92,9 +92,9 @@ class SplayTree:
         results = [None] * 2
         self.counter = 1
         success = False
-        if not self.empty:
+        if self.root is not None:
             node = self.root
-            last = None
+            last = node
             while node is not None:
                 self.counter += 1
                 last = node
