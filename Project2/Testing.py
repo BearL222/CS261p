@@ -2,34 +2,46 @@ from TestFunc import *
 import matplotlib.pyplot as plt
 import numpy as np
 
+# configuration
+tree_type = 1
+write = 1
+display_type = 1
+loop_times = 50
 
-tree_type = 0
-test_size = 50000
+colors = ['b', 'r', 'g']
+test_size = 5000
 base_size = test_size / 50
 bases = []
 for i in range(1, 51):
     bases.append(int(base_size * i))
 
-# file_name = "tree_" + str(tree_type) + ".txt"
-#
-# # load data from disk
-# results = np.genfromtxt(file_name, delimiter=',')
+file_name = "results/tree_" + str(tree_type) + ".txt"
 
-# calculate data
-loop_times = 1
-results = np.zeros((50,4))
-for i in range(loop_times):
-    # basic test info
-    test = TestFunc(test_size)
-    results += test.start_test(tree_type)
-    print(i+1, " times finished")
-results /= loop_times
-#
-# # save data
-# np.savetxt(file_name,results)
+if write == 0:
+    # load data from disk
+    results = np.loadtxt(file_name, delimiter=' ')
+else:
+    # calculate data
+    results = np.zeros((50,3))
+    for i in range(loop_times):
+        # basic test info
+        test = TestFunc(test_size)
+        results += test.start_test(tree_type)
+        print(i+1, " times finished")
+    results /= loop_times
 
-# show plot
-for i in range(4):
-    plt.figure(i)
-    plt.plot(bases, results[:, i], 'b')
+    # save data
+    np.savetxt(file_name,results)
+
+if display_type == 0:
+    # show in 3 plots
+    for i in range(3):
+        plt.figure(i)
+        plt.plot(bases, results[:, i], colors[i])
+        plt.show()
+else:
+    # show in one plot
+    plt.figure(1)
+    for i in range(3):
+        plt.plot(bases, results[:, i], colors[i])
     plt.show()

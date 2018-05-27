@@ -11,9 +11,8 @@ class AVLTree:
 
     def search(self, k):
         results = [None] * 2
-        self.counter = 0
+        self.counter = 1
         if self.root is None:
-            self.counter += 1
             results[1] = self.counter
             return results
 
@@ -26,13 +25,13 @@ class AVLTree:
                 node = node.rightChild
             else:
                 results[0] = node
-                break;
+                break
         results[1] = self.counter
         return results
 
     def insert(self, k):
         results = [None] * 2
-        self.counter = 0
+        self.counter = 1
         node = self.inserting(self.root, k)
         if self.root is None:
             self.root = node
@@ -57,8 +56,6 @@ class AVLTree:
                     node = self.rr(node)
                 else:
                     node = self.rl(node)
-        else:
-            node = node
         node.height = max(self.height(node.leftChild), self.height(node.rightChild)) + 1
         return node
 
@@ -95,7 +92,7 @@ class AVLTree:
 
     def delete(self, k):
         results = [None] * 2
-        self.counter = 0
+        self.counter = 1
         return_node = self.search(k)
         if return_node[0] is not None:
             self.deleting(self.root, return_node[0])
@@ -116,7 +113,7 @@ class AVLTree:
                     root = self.rr(root)
         elif node.value > root.value:
             root.rightChild = self.deleting(root.rightChild, node)
-            if self.height(root.leftChild) == self.height(node.rightChild) + 2:
+            if self.height(root.leftChild) == self.height(root.rightChild) + 2:
                 l = root.leftChild
                 if self.height(l.rightChild) > self.height(l.leftChild):
                     root = self.lr(root)

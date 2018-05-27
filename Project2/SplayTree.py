@@ -1,9 +1,11 @@
 from SNode import *
 
+
 class SplayTree:
     root = None
     empty = True
     counter = 0
+    height = 0
 
     def __init__(self):
         self.empty = True
@@ -13,14 +15,17 @@ class SplayTree:
         # mark parent's parent
         pp = parent.parent
         if pp is not None:
-            lor = parent is not pp.leftChild
+            lor = parent is pp.rightChild
 
         # rotate
         v = parent.leftChild
         parent.leftChild = v.rightChild
+        if parent.leftChild is not None:
+            parent.leftChild.parent = parent
         v.rightChild = parent
+        parent.parent = v
 
-        # update parent
+        # update v's parent
         if pp is not None:
             v.parent = pp
             if lor:
@@ -30,21 +35,21 @@ class SplayTree:
         else:
             self.root = v
             v.parent = None
-        parent.parent = v
-        if parent.leftChild is not None:
-            parent.leftChild.parent = parent
 
     def rotate_left(self, parent):
         self.counter += 1
         # mark parent's parent
         pp = parent.parent
         if pp is not None:
-            lor = parent is not pp.leftChild
+            lor = parent is pp.rightChild
 
         # rotate
         v = parent.rightChild
         parent.rightChild = v.leftChild
+        if parent.rightChild is not None:
+            parent.rightChild.parent = parent
         v.leftChild = parent
+        parent.parent = v
 
         # update parent
         if pp is not None:
@@ -56,15 +61,13 @@ class SplayTree:
         else:
             self.root = v
             v.parent = None
-        parent.parent = v
-        if parent.rightChild is not None:
-            parent.rightChild.parent = parent
 
     def splay(self, node):
         self.counter += 1
         if node is None:
             return
         while node.parent is not None:
+            self.counter += 1
             if node.parent.parent is None:
                 # zig
                 if node is node.parent.leftChild:
@@ -91,9 +94,8 @@ class SplayTree:
     def search(self, k):
         results = [None] * 2
         self.counter = 1
-        success = False
+        node = self.root
         if self.root is not None:
-            node = self.root
             last = node
             while node is not None:
                 self.counter += 1
@@ -103,13 +105,12 @@ class SplayTree:
                 elif k > node.value:
                     node = node.rightChild
                 else:
-                    success = True
                     break
-            if success:
+            if node is not None:
                 self.splay(node)
             else:
                 self.splay(last)
-        results[0] = success
+        results[0] = True if node is not None else False
         results[1] = self.counter
         return results
 
@@ -117,7 +118,7 @@ class SplayTree:
         results = [None] * 2
         self.counter = 1
         new_node = SNode(k, None)
-        if self.empty:
+        if self.root is None:
             self.empty = False
             self.root = new_node
         else:
@@ -126,20 +127,24 @@ class SplayTree:
             parent = None
             lor = 0
             h1 = True
+            h = 0
             while node is not None:
+                h += 1
                 self.counter += 1
+                parent = node
                 if k < node.value:
-                    parent = node
                     lor = 0
                     node = node.leftChild
                 elif k > node.value:
-                    parent = node
                     lor = 1
                     node = node.rightChild
                 else:
+                    # already exist
                     h1 = False
                     break
+            self.height = max(self.height, h)
             if h1:
+                # on the left or right side of parent
                 if lor == 0:
                     parent.leftChild = new_node
                 else:
@@ -148,6 +153,8 @@ class SplayTree:
 
                 # splay
                 self.splay(new_node)
+            else:
+                self.splay(node)
         results[1] = self.counter
         return results
 
@@ -155,10 +162,9 @@ class SplayTree:
         results = [None] * 2
         self.counter = 1
         success = False
-        if not self.empty:
+        if self.root is not None:
             node = self.root
             last = None
-            # find it
             while node is not None:
                 self.counter += 1
                 last = node
@@ -170,7 +176,7 @@ class SplayTree:
                     success = True
                     break
             if success:
-                # delete it
+                # find it, then delete it
                 p = node.parent
                 self.true_delete(node)
                 self.splay(p)
@@ -180,25 +186,12 @@ class SplayTree:
         results[1] = self.counter
         return results
 
-    def remove_node(self, node):
-        self.counter += 1
-        if node is not None:
-            if node.parent is None:
-                # it is the root
-                self.root = None
-                self.empty = True
-            else:
-                if node is node.parent.leftChild:
-                    node.parent.leftChild = None
-                elif node is node.parent.rightChild:
-                    node.parent.rightChild = None
-
     def true_delete(self, node):
         self.counter += 1
         # if it is the root
         is_root = False
         dummy = SNode(0, None)
-        if node is self.root:
+        if node.parent is None:
             is_root = True
             dummy.leftChild = node
             node.parent = dummy
@@ -206,13 +199,19 @@ class SplayTree:
         # 3 cases
         if node.leftChild is None and node.rightChild is None:
             # if node is a leaf node
-            self.remove_node(node)
+            if node is node.parent.leftChild:
+                node.parent.leftChild = None
+            else:
+                node.parent.rightChild = None
         else:
             # if node is not a leaf node
             lor = node is node.parent.rightChild
             parent = node.parent
             if node.leftChild is None and node.rightChild is None:
-                self.remove_node(node)
+                if node is node.parent.leftChild:
+                    node.parent.leftChild = None
+                else:
+                    node.parent.rightChild = None
             elif node.leftChild is not None and node.rightChild is None:
                 if not lor:
                     parent.leftChild = node.leftChild
@@ -232,13 +231,10 @@ class SplayTree:
                 max_left = node.leftChild
                 while max_left.rightChild is not None:
                     self.counter += 1
-                    if max_left.rightChild.value <= max_left.value:
-                        a=1
                     max_left = max_left.rightChild
-                value_to_relace = max_left.value
+                node.value = max_left.value
                 self.true_delete(max_left)
-                node.value = value_to_relace
 
         # if it is the root, remove dummy
         if is_root:
-            node.parent = None
+            dummy.leftChild.parent = None
