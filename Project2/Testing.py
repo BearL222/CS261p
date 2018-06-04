@@ -26,6 +26,9 @@ else:
     for i in range(loop_times):
         # basic test info
         test = TestFunc(test_size)
+        # np.savetxt("dataset.txt", test.getDataset())
+        # np.savetxt("dataset_unit.txt", test.getDatasetUnit())
+
         results += test.start_test(tree_type)
         print(i+1, " times finished")
     results /= loop_times

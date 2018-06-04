@@ -34,6 +34,12 @@ class TestFunc:
         for i in range(int(self.unit_size)):
             self.dataset_unit.append(random.randint(0, self.rand_range))
 
+    def getDataset(self):
+        return self.dataset
+
+    def getDatasetUnit(self):
+        return self.dataset_unit
+
     def start_test(self, type):
         results = np.zeros((50, 3))
         for index, i in enumerate(self.bases):
